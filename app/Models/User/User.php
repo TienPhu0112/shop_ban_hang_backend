@@ -16,6 +16,8 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+    const USER_AVATAR_DISK = 'user_avatar';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -47,6 +49,8 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $appends = ['avatar_url'];
 
     public function userInformation()
     {
@@ -83,5 +87,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function getAvatarUrlAttribute()
+    {
+        return getFullPublicFileUrl($this->attributes['avatar']);
     }
 }
