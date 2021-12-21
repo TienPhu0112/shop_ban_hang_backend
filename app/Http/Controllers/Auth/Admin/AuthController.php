@@ -28,7 +28,7 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'expires_in' => Carbon::now()->addMinutes(Config::get('jwt.ttl')),
-                'user' => $admin
+                'admin' => $admin
             ]);
         }
 
