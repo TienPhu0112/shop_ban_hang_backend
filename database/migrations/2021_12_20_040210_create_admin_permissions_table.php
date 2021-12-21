@@ -15,8 +15,8 @@ class CreateAdminPermissionsTable extends Migration
     {
         Schema::create('admin_permissions', function (Blueprint $table) {
             $table->id();
-            $table->integer('admin_id');
-            $table->integer('permission_id');
+            $table->foreignId('admin_id');
+            $table->foreignId('permission_id');
             $table->timestamps();
         });
     }

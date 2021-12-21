@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserInformationsTable extends Migration
+class CreateVerifyAccountTokensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateUserInformationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_informations', function (Blueprint $table) {
+        Schema::create('verify_account_tokens', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
-            $table->string('phone_num');
-            $table->string('province');
-            $table->string('district');
-            $table->string('address');
+            $table->string('token', 50);
+            $table->string('expired_at');
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateUserInformationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_informations');
+        Schema::dropIfExists('verify_account_tokens');
     }
 }

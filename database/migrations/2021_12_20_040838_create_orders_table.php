@@ -15,7 +15,7 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
+            $table->foreignId('user_id');
             $table->text('order_note');
             $table->integer('pay_method')->comment('1:shipCOD , 2:Banking');
             $table->integer('status')->comment('1:đặt hàng, 2:Đã nhận đơn, 3:đang vận chuyển, 4:đơn hàng thành công, 5:giao hàng thất bại, 6:người dùng hủy');
