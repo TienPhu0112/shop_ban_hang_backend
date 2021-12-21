@@ -45,11 +45,13 @@ class AuthController extends Controller
                 ], 401);
             }
 
+            $user = $this->user->with('userInformation')->find(Auth::user()->id);
+
             return response()->json([
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'expires_in' => Carbon::now()->addMinutes(Config::get('jwt.ttl')),
-                'user' => Auth::user()
+                'user' => $user
             ]);
         }
 
@@ -71,12 +73,26 @@ class AuthController extends Controller
     {
         try {
             DB::beginTransaction();
-                $user = $this->user->create([
+                $data = [
                     'first_name' => $request->first_name,
                     'last_name' => $request->last_name,
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
-                    'avatar' => 'image'
+                ];
+
+                if ($request->file('avatar')) {
+                    $data = array_merge($data, [
+                        'avatar' => uploadFileHelper(User::USER_AVATAR_DISK, $request->file('avatar'))
+                    ]);
+                }
+
+                $user = $this->user->create($data);
+
+                $userInformation = $user->userInformation()->create([
+                    'phone_num' => $request->phone_num,
+                    'province' => $request->province,
+                    'district' => $request->district,
+                    'address' => $request->address
                 ]);
                 
                 $this->sendVerifyAccountEmail($user);
