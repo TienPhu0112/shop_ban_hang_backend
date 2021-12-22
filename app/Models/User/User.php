@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use App\Helper\Helper;
 use App\Models\Blog\Comment;
 use App\Models\Order\Order;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -91,6 +92,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function getAvatarUrlAttribute()
     {
-        return getFullPublicFileUrl($this->attributes['avatar']);
+        return Helper::getFullPublicFileUrl($this->attributes['avatar']);
     }
 }
