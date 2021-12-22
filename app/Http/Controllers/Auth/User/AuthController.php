@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth\User;
 
+use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -26,10 +27,21 @@ class AuthController extends Controller
     {
         $this->user = $user;
     }
+
+    public function refresh()
+    {
+        $user = $this->user->with('userInformation')->find(Auth::user()->id);
+
+        return response()->json([
+            'access_token' => Auth::refresh(),
+            'token_type' => 'Bearer',
+            'expires_in' => Auth::factory()->getTTL() * 60,
+            'user' => $user
+        ]);
+    }
     
     public function login(LoginRequest $request)
     {
-
         if ($token = Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             if (!Auth::user()->email_verified_at) {
                 $verifyToken = DB::table('verify_account_tokens')->where('user_id', '=', Auth::user()->id);
@@ -41,7 +53,7 @@ class AuthController extends Controller
                 Auth::logout();
 
                 return response()->json([
-                    'message' => 'Unverified account, please check your email to verified its'
+                    'error' => 'Unauthorized, please check your email to verified its'
                 ], 401);
             }
 
@@ -50,13 +62,13 @@ class AuthController extends Controller
             return response()->json([
                 'access_token' => $token,
                 'token_type' => 'Bearer',
-                'expires_in' => Carbon::now()->addMinutes(Config::get('jwt.ttl')),
+                'expires_in' => Auth::factory()->getTTL() * 60,
                 'user' => $user
             ]);
         }
 
         return response()->json([
-            'message' => 'Wrong usename or password'
+            'error' => 'Wrong usename or password'
         ], 401);
     }
 
@@ -82,7 +94,7 @@ class AuthController extends Controller
 
                 if ($request->file('avatar')) {
                     $data = array_merge($data, [
-                        'avatar' => uploadFileHelper(User::USER_AVATAR_DISK, $request->file('avatar'))
+                        'avatar' => Helper::uploadFileHelper(User::USER_AVATAR_DISK, $request->file('avatar'))
                     ]);
                 }
 

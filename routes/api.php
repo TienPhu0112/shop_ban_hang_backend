@@ -21,6 +21,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->name('register');
     Route::get('verify-mail/{token}', [AuthController::class, 'verify'])->name('verify');
     Route::middleware('auth:api')->group(function () {
+        Route::post('refresh', [AuthController::class, 'refresh'])->name('refresh');
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     });
 });

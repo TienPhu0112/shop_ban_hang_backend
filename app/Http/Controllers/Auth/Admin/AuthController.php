@@ -27,7 +27,7 @@ class AuthController extends Controller
             return response()->json([
                 'access_token' => $token,
                 'token_type' => 'Bearer',
-                'expires_in' => Carbon::now()->addMinutes(Config::get('jwt.ttl')),
+                'expires_in' => Auth::guard('admin_api')->factory()->getTTL() * 60,
                 'admin' => $admin
             ]);
         }
@@ -35,5 +35,26 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Wrong usename or password'
         ], 401);
+    }
+
+    public function refresh()
+    {
+        $admin = $this->admin->with('adminInformation')->find(Auth::guard('admin_api')->user()->id);
+
+        return response()->json([
+            'access_token' => Auth::guard('admin_api')->refresh(),
+            'token_type' => 'Bearer',
+            'expires_in' => Auth::guard('admin_api')->factory()->getTTL() * 60,
+            'admin' => $admin
+        ]);
+    }
+
+    public function logout()
+    {
+        Auth::guard('admin_api')->logout();
+
+        return response()->json([
+            'status' => true
+        ]);
     }
 }
