@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ApiRequest extends FormRequest
+class AddProductRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -18,15 +16,6 @@ class ApiRequest extends FormRequest
         return true;
     }
 
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(
-            response()->json([
-                'message' => 'The given data was invalid.',
-                'errors' => $validator->errors()
-            ], 422));
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -35,7 +24,12 @@ class ApiRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'category_id' => 'required|numeric',
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'quantity' => 'required|numeric',
+            'image' => 'required',
+            'image.*' => 'mimes:jpeg,jpg,png,gif,csv,txt,pdf|max:2048'
         ];
     }
 }
