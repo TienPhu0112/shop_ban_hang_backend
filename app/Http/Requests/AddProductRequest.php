@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends ApiRequest
+class AddProductRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,12 @@ class LoginRequest extends ApiRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
-            'password' => 'required|min:6|max:32'
+            'category_id' => 'required|numeric|exists:categories,id',
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'quantity' => 'required|numeric',
+            'image' => 'required',
+            'image.*' => 'mimes:jpeg,jpg,png,gif,csv,txt,pdf|max:2048'
         ];
     }
 }

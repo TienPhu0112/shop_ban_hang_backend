@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ApiRquest extends FormRequest
+class ApiRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,9 @@ class ApiRquest extends FormRequest
     {
         throw new HttpResponseException(
             response()->json([
-            'message' => 'The given data was valid.',
-            'errors' => $validator->errors()
-        ], 422));
+                'message' => 'The given data was invalid.',
+                'errors' => $validator->errors()
+            ], 422));
     }
 
     /**
