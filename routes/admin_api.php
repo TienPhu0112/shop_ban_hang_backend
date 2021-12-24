@@ -19,5 +19,6 @@ Route::prefix('auth')->name('admin.auth.')->group(function () {
     Route::middleware('auth:admin_api')->group(function () {
         Route::post('refresh', [AuthController::class, 'refresh'])->name('refresh');
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+        Route::post('check', [AuthController::class, 'checkAuth'])->name('checkAuth');
     });
 });

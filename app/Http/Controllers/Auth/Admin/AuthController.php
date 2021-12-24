@@ -37,6 +37,11 @@ class AuthController extends Controller
         ], 401);
     }
 
+    public function checkAuth()
+    {
+        return auth()->user() ? true : false;
+    }
+
     public function refresh()
     {
         $admin = $this->admin->with('adminInformation')->find(Auth::guard('admin_api')->user()->id);
