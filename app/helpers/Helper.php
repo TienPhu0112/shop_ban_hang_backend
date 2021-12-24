@@ -2,9 +2,11 @@
 
 namespace App\Helper;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class Helper
@@ -45,12 +47,32 @@ class Helper
         Storage::delete('/public' . $productImage);
     }
 
-    public static function deleteMultipleFiles(array $filePaths)
+    public static function deleteMultipleFiles(array | object $filePaths)
     {
-        foreach($filePaths as $path){
+        foreach ($filePaths as $path) {
             $productImage = str_replace('/storage', '', $path);
             Storage::delete('/public' . $productImage);
         }
     }
 
+    public static function destroyMultipleRecord(Collection $records)
+    {
+        $count = 0;
+        try {
+            DB::beginTransaction();
+            foreach ($records as $record) {
+                if ($record->delete()) {
+                    $count++;
+                }
+            }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            throw $th;
+        }
+
+        return $count;
+    }
 }
