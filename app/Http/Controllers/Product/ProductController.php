@@ -5,13 +5,10 @@ namespace App\Http\Controllers\Product;
 use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddProductRequest;
-use App\Http\Requests\DeleteProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product\Product;
 use App\Models\Product\ProductImage;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\Expr\Throw_;
 
 class ProductController extends Controller
 {
@@ -72,30 +69,26 @@ class ProductController extends Controller
             ];
 
             $product = $this->product->findOrFail($id);
-
             $product->update($data);
 
             if ($request->hasFile('image')) {
                 foreach ($request->file('image') as $file) {
                     $name = Helper::uploadFileHelper(ProductImage::PRODUCT_IMAGE_DISK, $file);
-                    $imgData[] = $name;
                     $productImage = $product->productImages()->create([
-                        'product_id' => $product->id,
+                        'product_id' => $id,
                         'path' => $name,
                     ]);
                 }
             }
 
             if (count($request->deleted_files) > 0) {
-
-                foreach ($request->deleted_files as $key => $value) {
-                    $imageDeleted = $this->productImage->find($value);
-                    // Helper::deleteFileByFullPathHelper($imageDeleted->path);
-                    $imagePaths[] = $imageDeleted->path;
-                    $imageDeleted->delete();
-                }
+                $imageDeleted = $this->productImage->find($request->deleted_files);
+                $imagePaths = $imageDeleted->map(function ($image) {
+                    return $image->path;
+                });
 
                 Helper::deleteMultipleFiles($imagePaths);
+                Helper::destroyMultipleRecord($imageDeleted);
             }
 
             DB::commit();
@@ -120,9 +113,9 @@ class ProductController extends Controller
 
             $imageFilesBuilder = $this->productImage->where('product_id', $id);
 
-            foreach ($imageFilesBuilder->get() as $image) {
-                $imagePaths[] = $image->path;
-            }
+            $imagePaths = $imageFilesBuilder->get()->map(function ($image) {
+                return $image->path;
+            });
 
             Helper::deleteMultipleFiles($imagePaths);
             $imageDeleted = $imageFilesBuilder->delete();
@@ -133,6 +126,9 @@ class ProductController extends Controller
             throw $th;
         }
 
-        return "xoa thanh cong";
+        return response()->json([
+            'message' => 'Delete successfully',
+            'status' => true
+        ]);;
     }
 }
