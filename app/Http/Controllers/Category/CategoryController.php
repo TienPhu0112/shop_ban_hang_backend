@@ -50,7 +50,7 @@ class CategoryController extends Controller
 
             $categoryBuilder = $this->category->find($id);
 
-            $productsBuilder = $this->product->where('category_id',$id);
+            $productsBuilder = $this->product->where('category_id', $id);
 
             $products = $productsBuilder->get();
 
@@ -58,14 +58,14 @@ class CategoryController extends Controller
                 return $product->productImages;
             })->flatten();
 
-            $imagePaths = $images->map(function($image,$key){
+            $imagePaths = $images->map(function ($image, $key) {
                 return $image->path;
             });
 
             Helper::deleteMultipleFiles($imagePaths);
 
-            foreach($products as $product){
-                $product->productImages()->where('product_id',$product->id)->delete();
+            foreach ($products as $product) {
+                $product->productImages()->where('product_id', $product->id)->delete();
             }
 
             $productsBuilder->delete();
@@ -82,5 +82,11 @@ class CategoryController extends Controller
             'message' => 'Delete successfully',
             'status' => true
         ]);;
+    }
+
+    public function viewCategory()
+    {
+        $category = $this->category->all();
+        return response()->json($category);
     }
 }
