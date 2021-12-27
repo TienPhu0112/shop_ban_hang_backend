@@ -84,9 +84,19 @@ class CategoryController extends Controller
         ]);;
     }
 
-    public function viewCategory()
+    public function viewCategories()
     {
-        $category = $this->category->all();
-        return response()->json($category);
+        $categories = $this->category->all();
+        return response()->json([
+            'categories' => $categories
+        ]);
+    }
+
+    public function getDetailCategory($id){
+        $category = $this->category->findOrFail($id);
+
+        return response()->json([
+            'category' => $category
+        ]);
     }
 }
