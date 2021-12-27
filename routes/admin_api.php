@@ -24,15 +24,18 @@ Route::prefix('auth')->name('admin.auth.')->group(function () {
     });
 });
 
+Route::middleware('auth:admin_api')->group(function(){
+    Route::prefix('product')->name('admin.product.')->group(function () {
+        Route::post('add', [ProductController::class, 'add'])->name('add');
+        Route::put('update/{id}', [ProductController::class, 'updateProduct'])->name('update');
+        Route::delete('delete/{id}', [ProductController::class, 'deleteProduct'])->name('delete');
+    });
 
-Route::prefix('product')->name('admin.product.')->group(function () {
-    Route::post('add', [ProductController::class, 'add'])->name('add');
-    Route::put('update/{id}', [ProductController::class, 'updateProduct'])->name('update');
-    Route::delete('delete/{id}', [ProductController::class, 'deleteProduct'])->name('delete');
+    Route::prefix('category')->name('admin.category.')->group(function () {
+        Route::post('add', [CategoryController::class, 'addCategory'])->name('add');
+        Route::put('update/{id}', [CategoryController::class, 'updateCategory'])->name('update');
+        Route::delete('delete/{id}', [CategoryController::class, 'deleteCategory'])->name('delete');
+        Route::post('view',[CategoryController::class,'viewCategory'])->name('view');
+    });
 });
 
-Route::prefix('category')->name('admin.category.')->group(function () {
-    Route::post('add', [CategoryController::class, 'addCategory'])->name('add');
-    Route::put('update/{id}', [CategoryController::class, 'updateCategory'])->name('update');
-    Route::delete('delete/{id}', [CategoryController::class, 'deleteCategory'])->name('delete');
-});
