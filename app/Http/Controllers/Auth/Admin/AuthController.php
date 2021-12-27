@@ -59,7 +59,7 @@ class AuthController extends Controller
         Auth::guard('admin_api')->logout();
 
         return response()->json([
-            'status' => true
+            'logout' => true
         ]);
     }
 }
