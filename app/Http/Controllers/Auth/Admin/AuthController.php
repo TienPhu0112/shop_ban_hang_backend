@@ -50,7 +50,8 @@ class AuthController extends Controller
             'access_token' => Auth::guard('admin_api')->refresh(),
             'token_type' => 'Bearer',
             'expires_in' => Auth::guard('admin_api')->factory()->getTTL() * 60,
-            'admin' => $admin
+            'admin' => $admin,
+            'isAdminRefreshingToken' => true
         ]);
     }
 
