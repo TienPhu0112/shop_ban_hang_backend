@@ -6,6 +6,7 @@ use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\Product\Category;
 use App\Models\Product\Product;
 use App\Models\Product\ProductImage;
 use Illuminate\Support\Facades\DB;
@@ -16,10 +17,28 @@ class ProductController extends Controller
 
     protected $productImage;
 
-    public function __construct(Product $product, ProductImage $productImage)
+    protected $category;
+
+    public function __construct(Product $product, ProductImage $productImage, Category $category)
     {
         $this->product = $product;
         $this->productImage = $productImage;
+        $this->category = $category;
+    }
+
+    public function getAllProducts()
+    {
+        return response()->json([
+            'products' => $this->product->all()
+        ]);
+    }
+
+    public function getProductDetail($id)
+    {
+        return response()->json([
+            'product' => $this->product->with(['productImages', 'category'])->findOrFail($id),
+            'categories' => $this->category->all()
+        ]);
     }
 
     public function add(AddProductRequest $request)

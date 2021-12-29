@@ -29,7 +29,7 @@ class AddProductRequest extends ApiRequest
             'price' => 'required|numeric',
             'quantity' => 'required|numeric',
             'image' => 'required',
-            'image.*' => 'mimes:jpeg,jpg,png,gif,csv,txt,pdf|max:2048'
+            'image.*' => 'mimes:jpeg,jpg,png,jfif'
         ];
     }
 }

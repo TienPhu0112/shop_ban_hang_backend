@@ -11,12 +11,9 @@ use Illuminate\Support\Facades\Storage;
 
 class Helper
 {
-
-    const SLUG_SPLITTER = '-';
-
     public static function uploadFileHelper($disk, $file, $subPath = '')
     {
-        $fileName = Str::slug($file->getClientOriginalName(), self::SLUG_SPLITTER) . Carbon::now()->timestamp;
+        $fileName = md5($file->getClientOriginalName()) . Carbon::now()->timestamp;
         $fileExt = $file->getClientOriginalExtension();
         $name = $file->storeAs($subPath, $fileName . '.' . $fileExt, $disk);
 
@@ -43,15 +40,15 @@ class Helper
 
     public static function deleteFileByFullPathHelper($filePath)
     {
-        $productImage = str_replace('/storage', '', $filePath);
-        Storage::delete('/public' . $productImage);
+        $productImage = str_replace('/storage', '/public', $filePath);
+        Storage::delete($productImage);
     }
 
     public static function deleteMultipleFiles(array | object $filePaths)
     {
         foreach ($filePaths as $path) {
-            $productImage = str_replace('/storage', '', $path);
-            Storage::delete('/public' . $productImage);
+            $productImage = str_replace('/storage', '/public', $path);
+            Storage::delete($productImage);
         }
     }
 
