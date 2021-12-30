@@ -34,10 +34,10 @@ class UpdateProductRequest extends AddProductRequest
     {
         return array_merge(parent::rules(),
             [
-                'is_remain_img' => 'required|boolean',
+                'is_remain_img' => 'required',
                 'deleted_files' => 'nullable|array',
                 'deleted_files.*' => 'exists:product_images,id',
-                'image' => ' required_if:is_remain_img,false'
+                'image' => 'required_if:is_remain_img,0'
             ]
         );
     }
